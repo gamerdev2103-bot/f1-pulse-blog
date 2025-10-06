@@ -7,15 +7,20 @@
   <style>
     body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #1a1a1a; color: #fff;}
     header { background: linear-gradient(90deg, #e10600 60%, #444 100%); color: #fff; padding: 2rem 1rem; text-align: center; box-shadow: 0 4px 16px #700;}
-    main { max-width: 900px; margin: auto; padding: 2rem 1rem; box-sizing: border-box; }
+    main { max-width: 960px; margin: auto; padding: 2rem 1rem; box-sizing: border-box; }
+    .searchbar { width: 100%; max-width: 420px; margin: 1.2rem auto 2.5rem auto; display: block; padding: 0.7rem; border-radius: 8px; border: none; font-size: 1.15rem; background: #232323; color: #fff; box-shadow: 0 2px 6px #e106001a; }
+    .widget { background: #232323; border-radius: 13px; padding: 1.2rem 1rem; margin-bottom: 2rem; color: #fff; box-shadow: 0 2px 12px #e1060033;}
+    .widget-title { font-size: 1.15rem; font-weight: bold; margin-bottom: 1rem; color: #e10600;}
     .post { background: #232323; border-left: 5px solid #e10600; margin-bottom: 1.7rem; padding: 1.3rem 1rem; border-radius: 15px; box-shadow: 0 3px 18px #e1060066; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
     .post:hover { transform: scale(1.02); box-shadow: 0 10px 30px #e1060011; }
     .post-title { font-size: 1.5rem; font-weight: bold; margin-bottom: 0.3rem;}
     .post-date { color: #c0c0c0; font-size: 1rem; margin-bottom: 1rem;}
     .post-body { margin-bottom: 0.5rem; font-size: 1.08rem;}
+    .like-btn { background: #e10600; color: #fff; border: none; border-radius: 6px; padding: 0.4rem 1.1rem; cursor: pointer; font-size: 1rem; margin-top: 0.4rem; transition: background 0.2s; }
+    .like-btn.liked { background: #fff; color: #e10600; }
     .footer { text-align: center; background: #111; color: #eee; padding: 1rem; margin-top: 3rem; font-size: 1rem;}
     .backdrop { background: linear-gradient(120deg, #e10600 5%, #232323 100%); padding: 0.8rem; border-radius: 12px; margin-bottom: 2.5rem; box-shadow: 0 2px 8px #e1060010;}
-    @media (max-width: 600px) { main { padding: 0.4rem; } .post { padding: 0.7rem 0.5rem; font-size: 0.99rem; } }
+    @media (max-width: 600px) { main { padding: 0.4rem;} .widget{padding:0.6rem;} .post { padding: 0.7rem 0.5rem; font-size: 0.99rem; } }
     .post { opacity: 0; transform: translateY(20px); animation: fadeIn 0.7s ease forwards; }
     .post:nth-child(1) { animation-delay: 0.1s; }
     .post:nth-child(2) { animation-delay: 0.3s; }
@@ -28,7 +33,7 @@
     }
     .modal-bg.active { display: flex; }
     .modal-card {
-      background: #181818; color: #fff; min-width: 280px; max-width: 460px; padding: 1.7rem 2rem;
+      background: #181818; color: #fff; min-width: 280px; max-width: 480px; padding: 1.7rem 2rem;
       border-radius: 13px; box-shadow: 0 6px 40px #e1060060; text-align: left; position: relative;
       animation: popIn 0.24s ease;
     }
@@ -40,6 +45,10 @@
       position: absolute; top: 0.6rem; right: 1.2rem; background: none; border: none; color: #e10600; font-size: 2.1rem; cursor: pointer;
     }
     .modal-close:hover { color: #fff; }
+    .modal-comments { margin-top: 1.2rem;}
+    .comment-box { width: 100%; padding: 0.7rem; border-radius: 8px; background: #232323; color: #fff; border: none; margin-bottom: 0.6rem;}
+    .add-comment-btn { background: #e10600; color: #fff; border: none; border-radius: 6px; padding: 0.4rem 1.1rem; cursor: pointer; font-size: 1rem; transition: background 0.2s; }
+    .comment-item { background: #232323; border-radius: 6px; padding: 0.5rem; margin-bottom: 0.3rem; font-size: 0.96rem;}
   </style>
 </head>
 <body>
@@ -49,10 +58,24 @@
       <p>Your Trusted Source For Formula 1 News & Insights</p>
     </div>
   </header>
-  <main id="posts-area"></main>
+  <main>
+    <input class="searchbar" id="searchbar" placeholder="Search posts… e.g. Red Bull, rookie, strategy">
+    <div class="widget">
+      <div class="widget-title">2025 F1 Drivers Standings (Demo)</div>
+      <ul>
+        <li><b>1. Max Verstappen</b> – Red Bull – 214 pts</li>
+        <li><b>2. Lewis Hamilton</b> – Mercedes – 189 pts</li>
+        <li><b>3. Charles Leclerc</b> – Ferrari – 167 pts</li>
+        <li>4. Lando Norris – McLaren – 144 pts</li>
+        <li>5. Liam Evans – Williams – 131 pts</li>
+      </ul>
+      <small>(Data is demo, can be automated via n8n and API)</small>
+    </div>
+    <div id="posts-area"></div>
+  </main>
   <div class="footer">
     &copy; 2025 F1 Pulse. Automated blog powered by n8n & GitHub Pages.<br>
-    <span id="credits">Made interactive for fans like you!</span>
+    All features, interactive design, and updates for true F1 fans!
   </div>
   <!-- Modal viewer -->
   <div class="modal-bg" id="modal-bg">
@@ -61,41 +84,105 @@
       <div class="modal-title" id="modal-title"></div>
       <div class="modal-date" id="modal-date"></div>
       <div class="modal-body" id="modal-body"></div>
+      <button class="like-btn" id="like-btn">Like (<span id="like-count">0</span>)</button>
+      <div class="modal-comments" id="modal-comments">
+        <p><b>Comments (local):</b></p>
+        <div id="comments-list"></div>
+        <textarea id="comment-box" class="comment-box" placeholder="Add your comment"></textarea><br>
+        <button class="add-comment-btn" id="add-comment-btn">Add Comment</button>
+      </div>
     </div>
   </div>
   <script>
-    // Load posts dynamically from posts.json
     let postsData = [];
+    let likes = JSON.parse(localStorage.getItem('f1pulse_likes') || '{}');
+    let comments = JSON.parse(localStorage.getItem('f1pulse_comments') || '{}');
+    let currentPostIdx = -1;
     fetch('posts.json')
       .then(response => response.json())
       .then(posts => {
         postsData = posts;
-        const area = document.getElementById('posts-area');
-        posts.reverse().forEach((post, idx) => {
-          const el = document.createElement('div');
-          el.className = 'post';
-          el.innerHTML = `<div class="post-title">${post.title}</div>
-                          <div class="post-date">${post.date}</div>
-                          <div class="post-body">${post.body}</div>`;
-          el.addEventListener('click', () => showModal(post));
-          area.appendChild(el);
-        });
+        renderPosts(posts);
+        // Enable searching
+        document.getElementById('searchbar').oninput = function() {
+          const q = this.value.toLowerCase().trim();
+          if (!q) {
+            renderPosts(postsData);
+          } else {
+            renderPosts(postsData.filter(p =>
+              p.title.toLowerCase().includes(q) || p.body.toLowerCase().includes(q)
+            ));
+          }
+        };
       });
+
+    function renderPosts(list) {
+      const area = document.getElementById('posts-area');
+      area.innerHTML = "";
+      list.reverse().forEach((post, idx) => {
+        const el = document.createElement('div');
+        el.className = 'post';
+        el.innerHTML = `<div class="post-title">${post.title}</div>
+                        <div class="post-date">${post.date}</div>
+                        <div class="post-body">${post.body}</div>
+                        <button class="like-btn${likes[idx]? ' liked':''}">Like (${likes[idx]||0})</button>`;
+        el.querySelector('.like-btn').onclick = e => {
+          likes[idx] = (likes[idx]||0)+1;
+          localStorage.setItem('f1pulse_likes', JSON.stringify(likes));
+          e.target.innerText = `Like (${likes[idx]})`;
+          e.target.classList.add('liked');
+          e.stopPropagation();
+        };
+        el.onclick = () => showModal(post, idx);
+        area.appendChild(el);
+      });
+    }
 
     // Modal logic
     const modalBg = document.getElementById('modal-bg');
     const modalClose = document.getElementById('modal-close');
-    function showModal(post) {
+    function showModal(post, idx) {
+      currentPostIdx = idx;
       document.getElementById('modal-title').innerText = post.title;
       document.getElementById('modal-date').innerText = post.date;
       document.getElementById('modal-body').innerHTML = post.body;
+      document.getElementById('like-count').innerText = likes[idx] || 0;
+      document.getElementById('like-btn').classList.toggle('liked', !!likes[idx]);
+      // Like modal
+      document.getElementById('like-btn').onclick = function() {
+        likes[idx] = (likes[idx]||0)+1;
+        localStorage.setItem('f1pulse_likes', JSON.stringify(likes));
+        document.getElementById('like-count').innerText = likes[idx];
+        this.classList.add('liked');
+      };
+      // Comments modal
+      renderComments(idx);
       modalBg.classList.add('active');
     }
     modalClose.onclick = () => { modalBg.classList.remove('active'); };
-    // Optional: close modal by clicking outside
-    modalBg.onclick = function(e) {
-      if(e.target === modalBg) modalBg.classList.remove('active');
+    modalBg.onclick = function(e) { if(e.target === modalBg) modalBg.classList.remove('active'); };
+
+    // Comments section
+    function renderComments(idx) {
+      const listDiv = document.getElementById('comments-list');
+      listDiv.innerHTML = '';
+      (comments[idx]||[]).forEach(cmt => {
+        const el = document.createElement('div');
+        el.className = 'comment-item';
+        el.innerText = cmt;
+        listDiv.appendChild(el);
+      });
     }
+    document.getElementById('add-comment-btn').onclick = function() {
+      const val = document.getElementById('comment-box').value.trim();
+      if (val) {
+        if (!comments[currentPostIdx]) comments[currentPostIdx] = [];
+        comments[currentPostIdx].push(val);
+        localStorage.setItem('f1pulse_comments', JSON.stringify(comments));
+        document.getElementById('comment-box').value = '';
+        renderComments(currentPostIdx);
+      }
+    };
   </script>
 </body>
 </html>
