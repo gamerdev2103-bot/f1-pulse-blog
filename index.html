@@ -5,24 +5,38 @@
   <title>F1 Pulse – Formula 1 News & Insights</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #fff; color: #222;}
-    header { background: #e10600; color: #fff; padding: 1.5rem 1rem; text-align: center; }
-    main { max-width: 800px; margin: auto; padding: 2rem; box-sizing: border-box; }
-    .post { background: #fff; border-left: 4px solid #e10600; margin-bottom: 2rem; padding: 1.2rem 1rem; border-radius: 9px; box-shadow: 0 2px 10px #f0f0f0;}
-    .post-title { font-size: 1.4rem; font-weight: bold; margin-bottom: 0.6rem;}
-    .post-date { color: #888; font-size: 0.95rem; margin-bottom: 0.8rem;}
-    .footer { text-align: center; background: #222; color: #eee; padding: 0.8rem; margin-top: 3rem;}
-    @media (max-width: 600px) { main { padding: 1rem; } }
+    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #1a1a1a; color: #fff;}
+    header { background: linear-gradient(90deg, #e10600 60%, #444 100%); color: #fff; padding: 2rem 1rem; text-align: center; box-shadow: 0 4px 16px #700;}
+    main { max-width: 900px; margin: auto; padding: 2rem 1rem; box-sizing: border-box; }
+    .post { background: #232323; border-left: 5px solid #e10600; margin-bottom: 1.7rem; padding: 1.3rem 1rem; border-radius: 15px; box-shadow: 0 3px 18px #e1060066; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+    .post:hover { transform: scale(1.02); box-shadow: 0 10px 30px #e1060011; }
+    .post-title { font-size: 1.5rem; font-weight: bold; margin-bottom: 0.3rem;}
+    .post-date { color: #c0c0c0; font-size: 1rem; margin-bottom: 1rem;}
+    .post-body { margin-bottom: 0.5rem; font-size: 1.08rem;}
+    .footer { text-align: center; background: #111; color: #eee; padding: 1rem; margin-top: 3rem; font-size: 1rem;}
+    .backdrop { background: linear-gradient(120deg, #e10600 5%, #232323 100%); padding: 0.8rem; border-radius: 12px; margin-bottom: 2.5rem; box-shadow: 0 2px 8px #e1060010;}
+    @media (max-width: 600px) { main { padding: 0.4rem; } .post { padding: 0.7rem 0.5rem; font-size: 0.99rem; } }
+    /* Fade-in animation */
+    .post { opacity: 0; transform: translateY(20px); animation: fadeIn 0.7s ease forwards; }
+    .post:nth-child(1) { animation-delay: 0.1s; }
+    .post:nth-child(2) { animation-delay: 0.3s; }
+    .post:nth-child(3) { animation-delay: 0.5s; }
+    @keyframes fadeIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
   <header>
     <h1>F1 Pulse</h1>
-    <p>Your Trusted Source For Formula 1 News & Insights</p>
+    <div class="backdrop">
+      <p>Your Trusted Source For Formula 1 News & Insights</p>
+    </div>
   </header>
   <main id="posts-area"></main>
   <div class="footer">
-    &copy; 2025 F1 Pulse. Automated blog powered by n8n & GitHub Pages.
+    &copy; 2025 F1 Pulse. Automated blog powered by n8n & GitHub Pages.<br>
+    <span id="credits">Made interactive for fans like you!</span>
   </div>
   <script>
     // Load posts dynamically from posts.json
@@ -30,12 +44,15 @@
       .then(response => response.json())
       .then(posts => {
         const area = document.getElementById('posts-area');
-        posts.reverse().forEach(post => {
+        posts.reverse().forEach((post, idx) => {
           const el = document.createElement('div');
           el.className = 'post';
           el.innerHTML = `<div class="post-title">${post.title}</div>
                           <div class="post-date">${post.date}</div>
                           <div class="post-body">${post.body}</div>`;
+          el.addEventListener('click', function() {
+            alert("More features coming soon!\nBlog: " + post.title);
+          });
           area.appendChild(el);
         });
       });
