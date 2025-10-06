@@ -4,64 +4,160 @@
   <meta charset="UTF-8">
   <title>F1 Pulse – Formula 1 News & Insights</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=Orbitron:wght@700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #1a1a1a; color: #fff;}
-    header { background: linear-gradient(90deg, #e10600 60%, #444 100%); color: #fff; padding: 2rem 1rem; text-align: center; box-shadow: 0 4px 16px #700;}
-    main { max-width: 960px; margin: auto; padding: 2rem 1rem; box-sizing: border-box; }
-    .searchbar { width: 100%; max-width: 420px; margin: 1.2rem auto 2.5rem auto; display: block; padding: 0.7rem; border-radius: 8px; border: none; font-size: 1.15rem; background: #232323; color: #fff; box-shadow: 0 2px 6px #e106001a; }
-    .widget { background: #232323; border-radius: 13px; padding: 1.2rem 1rem; margin-bottom: 2rem; color: #fff; box-shadow: 0 2px 12px #e1060033;}
-    .widget-title { font-size: 1.15rem; font-weight: bold; margin-bottom: 1rem; color: #e10600;}
-    .post { background: #232323; border-left: 5px solid #e10600; margin-bottom: 1.7rem; padding: 1.3rem 1rem; border-radius: 15px; box-shadow: 0 3px 18px #e1060066; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
-    .post:hover { transform: scale(1.02); box-shadow: 0 10px 30px #e1060011; }
-    .post-title { font-size: 1.5rem; font-weight: bold; margin-bottom: 0.3rem;}
-    .post-date { color: #c0c0c0; font-size: 1rem; margin-bottom: 1rem;}
-    .post-body { margin-bottom: 0.5rem; font-size: 1.08rem;}
-    .like-btn { background: #e10600; color: #fff; border: none; border-radius: 6px; padding: 0.4rem 1.1rem; cursor: pointer; font-size: 1rem; margin-top: 0.4rem; transition: background 0.2s; }
-    .like-btn.liked { background: #fff; color: #e10600; }
-    .footer { text-align: center; background: #111; color: #eee; padding: 1rem; margin-top: 3rem; font-size: 1rem;}
-    .backdrop { background: linear-gradient(120deg, #e10600 5%, #232323 100%); padding: 0.8rem; border-radius: 12px; margin-bottom: 2.5rem; box-shadow: 0 2px 8px #e1060010;}
-    @media (max-width: 600px) { main { padding: 0.4rem;} .widget{padding:0.6rem;} .post { padding: 0.7rem 0.5rem; font-size: 0.99rem; } }
-    .post { opacity: 0; transform: translateY(20px); animation: fadeIn 0.7s ease forwards; }
-    .post:nth-child(1) { animation-delay: 0.1s; }
-    .post:nth-child(2) { animation-delay: 0.3s; }
-    .post:nth-child(3) { animation-delay: 0.5s; }
-    @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #181b22; color: #eef0f4;}
+    header {
+      background: linear-gradient(90deg, #e10600 60%, #222 100%);
+      color: #fff; text-align: center;
+      box-shadow: 0 6px 26px #222b;
+      padding: 2.5rem 1rem 1.9rem 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .header-bg {
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
+      position: absolute; left:0;top:0;width:100%;height:100%;
+      opacity: .18; pointer-events:none; z-index:0;
+    }
+    .logo {
+      font-family: 'Orbitron', Arial, sans-serif;
+      font-size: 2.6rem;
+      color: #fff; letter-spacing: 1px; text-shadow: 2px 4px 24px #e10600aa;
+      margin-bottom: 0.4rem; z-index:1; position:relative;
+    }
+    .subtitle {
+      font-size: 1.25rem; font-weight: 600; color: #fff; letter-spacing: 0.9px;
+      text-shadow: 0 1px 4px #0008;
+      margin-bottom: .5rem;
+      z-index: 1; position: relative;
+    }
+    main { max-width: 1050px; margin: auto; padding: 2rem 1.2rem; }
+    .searchbar {
+      width: 370px; min-width: 190px; max-width: 99vw;
+      margin: 1.5rem auto 2.2rem auto;
+      display: block; padding: 0.8rem 1rem; border-radius: 13px; border: none;
+      font-size: 1.11rem; background: #15171d; color: #fff;
+      box-shadow: 0 2px 10px #0006;
+      letter-spacing: 0.5px;
+      transition: box-shadow .22s,border .22s;
+    }
+    .searchbar:focus { box-shadow: 0 0 1px 4px #e1060038; outline: none; }
+    .widget {
+      background: linear-gradient(90deg,#23262d 70%, #e10600 120%);
+      border-radius: 16px; padding: 1.6rem 1.1rem; margin-bottom: 2.2rem;
+      color: #fff;
+      box-shadow: 0 2px 12px #e1060037;
+      border: 2px solid #232323;
+    }
+    .widget-title {
+      font-family: 'Orbitron', Arial, sans-serif;
+      font-size: 1.14rem; font-weight: bold; margin-bottom: 1rem; color: #e10600;
+      text-shadow:0 1px 5px #e1060040,0 1px 4px #1114;
+    }
+    .posts-list {
+      display: flex; flex-wrap: wrap; gap: 2rem 2.5%; justify-content: flex-start;
+    }
+    .post-card {
+      background: linear-gradient(110deg,#21232c 80%,#242e3f 101%);
+      color: #fff;
+      border-radius: 19px;
+      box-shadow: 0 8px 22px #0006;
+      margin-bottom: 1.6rem;
+      padding: 0;
+      position: relative;
+      width: 31%;
+      min-width: 280px; max-width: 340px;
+      transition: transform .2s, box-shadow .18s;
+      cursor: pointer;
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      border: 1.5px solid #232323;
+    }
+    .post-card:hover { transform:scale(1.029); box-shadow: 0 18px 38px #e1060066; border-color: #e10600a0; }
+    .post-img {
+      width: 100%; height: 150px; object-fit: cover; background: #232;
+      border-top-left-radius: 19px; border-top-right-radius: 19px;
+      filter: brightness(0.94) saturate(1.30);
+      border-bottom: 2.5px solid #e1060036;
+    }
+    .post-content {
+      padding: 1.16rem 1.13rem 0.7rem 1.13rem;
+      flex: 1 1 auto;
+      display: flex; flex-direction: column;
+    }
+    .post-badge {
+      display: inline-block;
+      font-size: 0.83rem; font-weight: 600;
+      color: #fff; background: #e10600;
+      border-radius: 8px; padding: 0.19em 0.63em;
+      box-shadow:0 2px 8px #e106002c;
+      margin-bottom: 0.5em;
+      letter-spacing: 0.8px;
+    }
+    .post-title {
+      font-size: 1.15rem; font-weight: 700; margin-bottom: 0.35rem; letter-spacing: 0.7px;
+      line-height: 1.3;
+      text-shadow: 0 1px 7px #e1060033;
+    }
+    .post-date { color: #b9b8c2; font-size: 0.97rem; margin-bottom: 1em;}
+    .post-body {
+      margin-bottom: 0.55rem; font-size: 1.011rem; line-height: 1.52;
+      max-height: 4.2em; overflow: hidden; position:relative;
+      text-overflow:ellipsis;
+    }
+    .readmore {
+      background:none; border:none; color:#e10600; font-weight:700;
+      cursor:pointer; font-size:0.97rem; text-decoration:underline;
+      align-self: flex-end;
+      margin-top: auto; margin-bottom: 0.1em;
+    }
+    .footer {
+      text-align: center; background: #101116; color: #eee; padding: 1.2rem; margin-top: 4rem; font-size: 1.03rem;
+      letter-spacing: 0.8px; border-top: 1px solid #181b22;
+    }
     /* Modal styles */
     .modal-bg {
       display: none; position: fixed; left: 0; top: 0; width: 100vw; height: 100vh;
-      background: rgba(20,20,20,0.83); z-index: 1000; align-items: center; justify-content: center;
+      background: rgba(28,15,23,0.92); z-index: 1000; align-items: center; justify-content: center;
     }
     .modal-bg.active { display: flex; }
     .modal-card {
-      background: #181818; color: #fff; min-width: 280px; max-width: 480px; padding: 1.7rem 2rem;
-      border-radius: 13px; box-shadow: 0 6px 40px #e1060060; text-align: left; position: relative;
-      animation: popIn 0.24s ease;
+      background: #191b23; color: #fff; min-width: 280px; max-width: 510px; width:90vw;
+      padding: 2rem 1.7rem 1.3rem 1.7rem; border-radius: 19px;
+      box-shadow: 0 15px 56px #e1060075; text-align: left; position: relative;
+      animation: popIn 0.19s cubic-bezier(.76,1.7,.4,1); 
+      font-size: 1.04rem; letter-spacing: 0.2px;
     }
-    @keyframes popIn { from { transform: scale(0.72); } to { transform: scale(1); } }
-    .modal-title { font-size: 1.45rem; font-weight: bold; margin-bottom: 0.7rem; color: #e10600;}
-    .modal-date { color: #e0e0e0; font-size: 0.98rem; margin-bottom: 0.8rem;}
-    .modal-body { font-size: 1.06rem; margin-bottom: 0.7rem; }
+    @keyframes popIn { from { transform: scale(0.81); opacity: 0;} to { transform: scale(1);opacity:1; } }
+    .modal-title { font-size: 1.38rem; font-weight: bold; margin-bottom: 0.36rem; color: #e10600;}
+    .modal-date { color: #e0e0e0; font-size: 0.98rem; margin-bottom: 0.97rem;}
+    .modal-body { font-size: 1.08rem; margin-bottom: 0.61rem; line-height: 1.57;}
     .modal-close {
-      position: absolute; top: 0.6rem; right: 1.2rem; background: none; border: none; color: #e10600; font-size: 2.1rem; cursor: pointer;
-    }
+      position: absolute; top: 0.8rem; right: 1.2rem; background: none; border: none;
+      color: #e10600; font-size: 2.3rem; cursor: pointer; }
     .modal-close:hover { color: #fff; }
-    .modal-comments { margin-top: 1.2rem;}
-    .comment-box { width: 100%; padding: 0.7rem; border-radius: 8px; background: #232323; color: #fff; border: none; margin-bottom: 0.6rem;}
-    .add-comment-btn { background: #e10600; color: #fff; border: none; border-radius: 6px; padding: 0.4rem 1.1rem; cursor: pointer; font-size: 1rem; transition: background 0.2s; }
-    .comment-item { background: #232323; border-radius: 6px; padding: 0.5rem; margin-bottom: 0.3rem; font-size: 0.96rem;}
+    @media (max-width:900px) {
+      .posts-list{gap:2rem 4%;}
+      .post-card{width: 47%;}
+    }
+    @media (max-width:600px) {
+      main { padding: 0.4rem; }
+      .post-card{min-width: 96vw;width:97vw;}
+      .modal-card{max-width: 99vw;padding: 1.06rem 0.5rem;}
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>F1 Pulse</h1>
-    <div class="backdrop">
-      <p>Your Trusted Source For Formula 1 News & Insights</p>
-    </div>
+    <div class="header-bg"></div>
+    <div class="logo">F1 Pulse</div>
+    <div class="subtitle">Your Trusted Source for Formula 1 News & Insights</div>
   </header>
   <main>
-    <input class="searchbar" id="searchbar" placeholder="Search posts… e.g. Red Bull, rookie, strategy">
+    <input class="searchbar" id="searchbar" placeholder="Search posts, e.g. Verstappen, Ferrari…">
     <div class="widget">
-      <div class="widget-title">2025 F1 Drivers Standings (Demo)</div>
+      <div class="widget-title">2025 F1 Drivers Standings <span style="font-weight:300;">(Demo)</span></div>
       <ul>
         <li><b>1. Max Verstappen</b> – Red Bull – 214 pts</li>
         <li><b>2. Lewis Hamilton</b> – Mercedes – 189 pts</li>
@@ -69,41 +165,34 @@
         <li>4. Lando Norris – McLaren – 144 pts</li>
         <li>5. Liam Evans – Williams – 131 pts</li>
       </ul>
-      <small>(Data is demo, can be automated via n8n and API)</small>
+      <small style="opacity:.7;">(Demo only: n8n/API upgrade ready!)</small>
     </div>
-    <div id="posts-area"></div>
+    <div class="posts-list" id="posts-area"></div>
   </main>
-  <div class="footer">
-    &copy; 2025 F1 Pulse. Automated blog powered by n8n & GitHub Pages.<br>
-    All features, interactive design, and updates for true F1 fans!
-  </div>
-  <!-- Modal viewer -->
+  <div class="footer">© 2025 F1 Pulse · Designed for passion · Automated with n8n & GitHub Pages</div>
+  <!-- Modal -->
   <div class="modal-bg" id="modal-bg">
     <div class="modal-card" id="modal-card">
       <button class="modal-close" id="modal-close">&times;</button>
       <div class="modal-title" id="modal-title"></div>
       <div class="modal-date" id="modal-date"></div>
       <div class="modal-body" id="modal-body"></div>
-      <button class="like-btn" id="like-btn">Like (<span id="like-count">0</span>)</button>
-      <div class="modal-comments" id="modal-comments">
-        <p><b>Comments (local):</b></p>
-        <div id="comments-list"></div>
-        <textarea id="comment-box" class="comment-box" placeholder="Add your comment"></textarea><br>
-        <button class="add-comment-btn" id="add-comment-btn">Add Comment</button>
-      </div>
     </div>
   </div>
   <script>
+    /* Illustration images for demo: Unsplash, Pexels, or custom racing*/
+    const demoImgs = [
+      'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=400&q=80'
+    ];
     let postsData = [];
-    let likes = JSON.parse(localStorage.getItem('f1pulse_likes') || '{}');
-    let comments = JSON.parse(localStorage.getItem('f1pulse_comments') || '{}');
-    let currentPostIdx = -1;
     fetch('posts.json')
       .then(response => response.json())
       .then(posts => {
         postsData = posts;
         renderPosts(posts);
-        // Enable searching
         document.getElementById('searchbar').oninput = function() {
           const q = this.value.toLowerCase().trim();
           if (!q) {
@@ -119,70 +208,40 @@
     function renderPosts(list) {
       const area = document.getElementById('posts-area');
       area.innerHTML = "";
-      list.reverse().forEach((post, idx) => {
-        const el = document.createElement('div');
-        el.className = 'post';
-        el.innerHTML = `<div class="post-title">${post.title}</div>
-                        <div class="post-date">${post.date}</div>
-                        <div class="post-body">${post.body}</div>
-                        <button class="like-btn${likes[idx]? ' liked':''}">Like (${likes[idx]||0})</button>`;
-        el.querySelector('.like-btn').onclick = e => {
-          likes[idx] = (likes[idx]||0)+1;
-          localStorage.setItem('f1pulse_likes', JSON.stringify(likes));
-          e.target.innerText = `Like (${likes[idx]})`;
-          e.target.classList.add('liked');
-          e.stopPropagation();
-        };
-        el.onclick = () => showModal(post, idx);
-        area.appendChild(el);
+      if(list.length==0){
+        area.innerHTML = "<p style='color:#e10600;font-weight:bold;text-align:center;padding:2em;font-size:1.2em;'>No posts found. Try a different search!</p>";
+        return;
+      }
+      list.slice().reverse().forEach((post, idx) => {
+        const card = document.createElement('div');
+        card.className = 'post-card';
+        let imgUrl = post.img || demoImgs[idx % demoImgs.length];
+        card.innerHTML = `
+          <img src="${imgUrl}" alt="F1" class="post-img" />
+          <div class="post-content">
+            <span class="post-badge">${(post.badge||"News")}</span>
+            <div class="post-title">${post.title}</div>
+            <div class="post-date">${post.date}</div>
+            <div class="post-body">${post.body}</div>
+            <button class="readmore">Read More &rarr;</button>
+          </div>
+        `;
+        card.querySelector('.readmore').onclick = e => { showModal(post); e.stopPropagation(); };
+        card.onclick = () => showModal(post);
+        area.appendChild(card);
       });
     }
-
-    // Modal logic
+    // Modal
     const modalBg = document.getElementById('modal-bg');
     const modalClose = document.getElementById('modal-close');
-    function showModal(post, idx) {
-      currentPostIdx = idx;
+    function showModal(post) {
       document.getElementById('modal-title').innerText = post.title;
       document.getElementById('modal-date').innerText = post.date;
       document.getElementById('modal-body').innerHTML = post.body;
-      document.getElementById('like-count').innerText = likes[idx] || 0;
-      document.getElementById('like-btn').classList.toggle('liked', !!likes[idx]);
-      // Like modal
-      document.getElementById('like-btn').onclick = function() {
-        likes[idx] = (likes[idx]||0)+1;
-        localStorage.setItem('f1pulse_likes', JSON.stringify(likes));
-        document.getElementById('like-count').innerText = likes[idx];
-        this.classList.add('liked');
-      };
-      // Comments modal
-      renderComments(idx);
       modalBg.classList.add('active');
     }
     modalClose.onclick = () => { modalBg.classList.remove('active'); };
     modalBg.onclick = function(e) { if(e.target === modalBg) modalBg.classList.remove('active'); };
-
-    // Comments section
-    function renderComments(idx) {
-      const listDiv = document.getElementById('comments-list');
-      listDiv.innerHTML = '';
-      (comments[idx]||[]).forEach(cmt => {
-        const el = document.createElement('div');
-        el.className = 'comment-item';
-        el.innerText = cmt;
-        listDiv.appendChild(el);
-      });
-    }
-    document.getElementById('add-comment-btn').onclick = function() {
-      const val = document.getElementById('comment-box').value.trim();
-      if (val) {
-        if (!comments[currentPostIdx]) comments[currentPostIdx] = [];
-        comments[currentPostIdx].push(val);
-        localStorage.setItem('f1pulse_comments', JSON.stringify(comments));
-        document.getElementById('comment-box').value = '';
-        renderComments(currentPostIdx);
-      }
-    };
   </script>
 </body>
 </html>
