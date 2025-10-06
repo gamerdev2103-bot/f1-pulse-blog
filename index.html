@@ -16,14 +16,30 @@
     .footer { text-align: center; background: #111; color: #eee; padding: 1rem; margin-top: 3rem; font-size: 1rem;}
     .backdrop { background: linear-gradient(120deg, #e10600 5%, #232323 100%); padding: 0.8rem; border-radius: 12px; margin-bottom: 2.5rem; box-shadow: 0 2px 8px #e1060010;}
     @media (max-width: 600px) { main { padding: 0.4rem; } .post { padding: 0.7rem 0.5rem; font-size: 0.99rem; } }
-    /* Fade-in animation */
     .post { opacity: 0; transform: translateY(20px); animation: fadeIn 0.7s ease forwards; }
     .post:nth-child(1) { animation-delay: 0.1s; }
     .post:nth-child(2) { animation-delay: 0.3s; }
     .post:nth-child(3) { animation-delay: 0.5s; }
-    @keyframes fadeIn {
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+    /* Modal styles */
+    .modal-bg {
+      display: none; position: fixed; left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(20,20,20,0.83); z-index: 1000; align-items: center; justify-content: center;
     }
+    .modal-bg.active { display: flex; }
+    .modal-card {
+      background: #181818; color: #fff; min-width: 280px; max-width: 460px; padding: 1.7rem 2rem;
+      border-radius: 13px; box-shadow: 0 6px 40px #e1060060; text-align: left; position: relative;
+      animation: popIn 0.24s ease;
+    }
+    @keyframes popIn { from { transform: scale(0.72); } to { transform: scale(1); } }
+    .modal-title { font-size: 1.45rem; font-weight: bold; margin-bottom: 0.7rem; color: #e10600;}
+    .modal-date { color: #e0e0e0; font-size: 0.98rem; margin-bottom: 0.8rem;}
+    .modal-body { font-size: 1.06rem; margin-bottom: 0.7rem; }
+    .modal-close {
+      position: absolute; top: 0.6rem; right: 1.2rem; background: none; border: none; color: #e10600; font-size: 2.1rem; cursor: pointer;
+    }
+    .modal-close:hover { color: #fff; }
   </style>
 </head>
 <body>
@@ -38,11 +54,22 @@
     &copy; 2025 F1 Pulse. Automated blog powered by n8n & GitHub Pages.<br>
     <span id="credits">Made interactive for fans like you!</span>
   </div>
+  <!-- Modal viewer -->
+  <div class="modal-bg" id="modal-bg">
+    <div class="modal-card" id="modal-card">
+      <button class="modal-close" id="modal-close">&times;</button>
+      <div class="modal-title" id="modal-title"></div>
+      <div class="modal-date" id="modal-date"></div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
   <script>
     // Load posts dynamically from posts.json
+    let postsData = [];
     fetch('posts.json')
       .then(response => response.json())
       .then(posts => {
+        postsData = posts;
         const area = document.getElementById('posts-area');
         posts.reverse().forEach((post, idx) => {
           const el = document.createElement('div');
@@ -50,12 +77,25 @@
           el.innerHTML = `<div class="post-title">${post.title}</div>
                           <div class="post-date">${post.date}</div>
                           <div class="post-body">${post.body}</div>`;
-          el.addEventListener('click', function() {
-            alert("More features coming soon!\nBlog: " + post.title);
-          });
+          el.addEventListener('click', () => showModal(post));
           area.appendChild(el);
         });
       });
+
+    // Modal logic
+    const modalBg = document.getElementById('modal-bg');
+    const modalClose = document.getElementById('modal-close');
+    function showModal(post) {
+      document.getElementById('modal-title').innerText = post.title;
+      document.getElementById('modal-date').innerText = post.date;
+      document.getElementById('modal-body').innerHTML = post.body;
+      modalBg.classList.add('active');
+    }
+    modalClose.onclick = () => { modalBg.classList.remove('active'); };
+    // Optional: close modal by clicking outside
+    modalBg.onclick = function(e) {
+      if(e.target === modalBg) modalBg.classList.remove('active');
+    }
   </script>
 </body>
 </html>
